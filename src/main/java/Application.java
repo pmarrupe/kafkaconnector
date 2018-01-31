@@ -127,13 +127,11 @@ public class Application {
             @Override
             public Void call(JavaPairRDD<String, Long> in) throws Exception {
                 in = in.mapToPair(a -> a.swap()).sortByKey(true).mapToPair(a -> a.swap());
-                List<Tuple2<String, Long>> topList = in.top(10);
+                List<Tuple2<String, Long>> topList = in.collect();
                 String key = String.valueOf(in.count());
 
                 for (Tuple2<String, Long> pair : topList) {
                     new KafkaProducer<String, String>(props).send(new ProducerRecord<>("TweetHashTags1", pair._2().toString(), pair._2()+" "+ pair._1()));
-                    System.out.println(
-                            String.format("%s (%s happiness)", pair._2(), pair._1()));
                 }
 
                 return null;
