@@ -20,6 +20,7 @@ import twitter4j.auth.AccessToken;
 import twitter4j.conf.ConfigurationBuilder;
 import com.google.common.base.Optional;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Application {
 
@@ -126,7 +127,7 @@ public class Application {
             @Override
             public Void call(JavaPairRDD<String, Long> in) throws Exception {
                 in = in.mapToPair(a -> a.swap()).sortByKey(true).mapToPair(a -> a.swap());
-                List<Tuple2<String, Long>> topList = in.collect();
+                List<Tuple2<String, Long>> topList = in.top(10);
                 String key = String.valueOf(in.count());
 
                 for (Tuple2<String, Long> pair : topList) {
